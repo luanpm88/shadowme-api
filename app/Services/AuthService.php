@@ -7,6 +7,7 @@ use App\Events\UserRegistered;
 use App\Models\RefreshToken;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -51,7 +52,13 @@ class AuthService
             ]);
         }
 
+        $stored->update(['last_used_at' => now()]);
         $stored->revoke();
+
+        Log::info('Refresh token rotated', [
+            'user_id' => $stored->user_id,
+            'refresh_token_id' => $stored->id,
+        ]);
 
         return $this->issueTokens($stored->user);
     }

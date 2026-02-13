@@ -19,18 +19,21 @@ class VideoController extends Controller
 
     public function index(Request $request)
     {
-        $videos = $this->videoService->list($request->all());
+        $videos = $this->videoService->list($request->all(), $request->user());
 
         return VideoResource::collection($videos);
     }
 
     public function show(Video $video)
     {
+        $this->authorize('view', $video);
+
         return new VideoResource($video);
     }
 
     public function store(StoreVideoRequest $request)
     {
+        $this->authorize('manage', Video::class);
         $video = $this->videoService->create(VideoData::fromArray($request->validated()));
 
         return new VideoResource($video);
@@ -38,6 +41,7 @@ class VideoController extends Controller
 
     public function update(UpdateVideoRequest $request, Video $video)
     {
+        $this->authorize('manage', $video);
         $payload = array_merge($video->toArray(), $request->validated());
         $video = $this->videoService->update($video, VideoData::fromArray($payload));
 
@@ -46,6 +50,7 @@ class VideoController extends Controller
 
     public function destroy(Video $video)
     {
+        $this->authorize('manage', $video);
         $video->delete();
 
         return response()->json(['message' => 'Deleted']);
