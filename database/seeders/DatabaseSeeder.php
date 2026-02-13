@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,11 +15,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Clear existing data once so seeders can run deterministically.
+        DB::statement('PRAGMA foreign_keys = OFF');
+        DB::table('transcript_segments')->delete();
+        DB::table('transcripts')->delete();
+        DB::table('clips')->delete();
+        DB::table('video_progress')->delete();
+        DB::table('videos')->delete();
+        DB::table('refresh_tokens')->delete();
+        DB::table('personal_access_tokens')->delete();
+        DB::table('users')->delete();
+        DB::statement('PRAGMA foreign_keys = ON');
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            UserSeeder::class,
+            VideoSeeder::class,
         ]);
     }
 }

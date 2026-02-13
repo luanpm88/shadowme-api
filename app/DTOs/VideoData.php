@@ -17,6 +17,7 @@ class VideoData
         public readonly array $topic_tags,
         public readonly ?array $metadata,
         public readonly bool $is_published,
+        public readonly bool $is_featured,
     ) {
     }
 
@@ -35,6 +36,7 @@ class VideoData
             $data['topic_tags'] ?? [],
             $data['metadata'] ?? null,
             (bool) ($data['is_published'] ?? true),
+            (bool) ($data['is_featured'] ?? false),
         );
     }
 
@@ -53,6 +55,7 @@ class VideoData
             'topic_tags' => $this->topic_tags,
             'metadata' => $this->metadata,
             'is_published' => $this->is_published,
+            'is_featured' => $this->is_featured,
         ];
     }
 }

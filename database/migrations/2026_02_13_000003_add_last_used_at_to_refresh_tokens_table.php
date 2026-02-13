@@ -8,15 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('refresh_tokens', function (Blueprint $table) {
-            $table->timestamp('last_used_at')->nullable()->after('expires_at');
-        });
+        // Column is now created directly in the create_refresh_tokens_table migration
+        // This migration is kept for backwards compatibility
     }
 
     public function down(): void
     {
-        Schema::table('refresh_tokens', function (Blueprint $table) {
-            $table->dropColumn('last_used_at');
-        });
+        // No-op
     }
 };

@@ -8,19 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('refresh_tokens', function (Blueprint $table) {
+        Schema::create('saved_videos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('token_hash', 64)->unique();
-            $table->timestamp('expires_at');
-            $table->timestamp('last_used_at')->nullable();
-            $table->timestamp('revoked_at')->nullable();
+            $table->foreignId('video_id')->constrained()->cascadeOnDelete();
+            $table->timestamp('saved_at')->useCurrent();
             $table->timestamps();
+
+            $table->unique(['user_id', 'video_id']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('refresh_tokens');
+        Schema::dropIfExists('saved_videos');
     }
 };

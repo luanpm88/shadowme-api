@@ -22,6 +22,7 @@ class VideoResource extends JsonResource
             'thumbnail_url' => $this->thumbnail_url,
             'language' => $this->language,
             'is_published' => $this->is_published,
+            'is_featured' => $this->is_featured,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

@@ -22,12 +22,14 @@ class Video extends Model
         'topic_tags',
         'metadata',
         'is_published',
+        'is_featured',
     ];
 
     protected $casts = [
         'topic_tags' => 'array',
         'metadata' => 'array',
         'is_published' => 'boolean',
+        'is_featured' => 'boolean',
     ];
 
     public function transcript()

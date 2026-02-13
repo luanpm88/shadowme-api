@@ -24,6 +24,11 @@ class VideoController extends Controller
         return VideoResource::collection($videos);
     }
 
+    public function filters(Request $request)
+    {
+        return response()->json($this->videoService->filters($request->user()));
+    }
+
     public function show(Video $video)
     {
         $this->authorize('view', $video);
