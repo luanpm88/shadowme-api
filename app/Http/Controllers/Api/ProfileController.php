@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreVideoProgressRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Clip;
+use App\Models\PracticeSession;
+use App\Models\SavedVideo;
 use App\Models\VideoProgress;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
@@ -19,14 +22,20 @@ class ProfileController extends Controller
     public function stats(Request $request)
     {
         $userId = $request->user()->id;
+        $today = now()->toDateString();
 
-        $minutes = VideoProgress::where('user_id', $userId)->sum('minutes_practiced');
-        $clips = Clip::where('user_id', $userId)->count();
+        $todayMinutes = PracticeSession::where('user_id', $userId)
+            ->where('practice_date', $today)
+            ->sum('minutes_practiced');
+
+        $todaySavedVideos = SavedVideo::where('user_id', $userId)
+            ->whereDate('created_at', $today)
+            ->count();
 
         return response()->json([
             'streak_days' => 0,
-            'minutes_practiced' => (int) $minutes,
-            'clips_saved' => $clips,
+            'minutes_practiced' => (int) $todayMinutes,
+            'videos_saved_today' => $todaySavedVideos,
         ]);
     }
 
@@ -46,7 +55,9 @@ class ProfileController extends Controller
         $videoId = (int) $request->validated('video_id');
         $lastPosition = (int) $request->validated('last_position_seconds');
         $minutesDelta = (int) $request->validated('minutes_practiced_delta');
+        $today = now()->toDateString();
 
+        // Update video progress (maintains position across all time)
         $progress = VideoProgress::firstOrNew([
             'user_id' => $userId,
             'video_id' => $videoId,
@@ -55,6 +66,18 @@ class ProfileController extends Controller
         $progress->last_position_seconds = $lastPosition;
         $progress->minutes_practiced = (int) ($progress->minutes_practiced ?? 0) + $minutesDelta;
         $progress->save();
+
+        // Record today's practice session
+        if ($minutesDelta > 0) {
+            $session = PracticeSession::firstOrNew([
+                'user_id' => $userId,
+                'video_id' => $videoId,
+                'practice_date' => $today,
+            ]);
+
+            $session->minutes_practiced = (int) ($session->minutes_practiced ?? 0) + $minutesDelta;
+            $session->save();
+        }
 
         return response()->json([
             'message' => 'Progress updated',
