@@ -58,6 +58,10 @@ class VideoStreamController
             $headers['Content-Range'] = "bytes {$start}-{$end}/{$fileSize}";
         }
 
+        if ($request->isMethod('HEAD')) {
+            return response('', $status, $headers);
+        }
+
         return response()->stream(
             function () use ($file, $start, $length) {
                 $handle = fopen($file, 'rb');
