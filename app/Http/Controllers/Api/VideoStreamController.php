@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Video;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Http\Request;
 
 class VideoStreamController
 {
-    public function stream(Request $request, string $filename): StreamedResponse
+    public function stream(Request $request, Video $video): StreamedResponse
     {
-        $safeFilename = basename($filename);
-        $relativePath = "videos/{$safeFilename}";
+        if ($video->source_type !== 'upload' || ! $video->source_ext) {
+            abort(404, 'Video not found');
+        }
+
+        $relativePath = $video->getSourcePath();
         $disk = Storage::disk('public');
 
-        if (!$disk->exists($relativePath)) {
+        if (! $disk->exists($relativePath)) {
             abort(404, 'Video not found');
         }
 

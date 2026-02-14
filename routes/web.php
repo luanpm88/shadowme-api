@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/videos', [AdminVideoController::class, 'index'])->name('admin.videos.index');
     Route::get('/admin/videos/create', [AdminVideoController::class, 'create'])->name('admin.videos.create');
     Route::post('/admin/videos', [AdminVideoController::class, 'store'])->name('admin.videos.store');
+    Route::patch('/admin/videos/{video}/title', [AdminVideoController::class, 'updateTitle'])->name('admin.videos.updateTitle');
     Route::get('/admin/users', [AdminUserController::class, 'index'])->name('admin.users.index');
 
     Route::get('/admin/videos/{video}/transcript', [AdminTranscriptController::class, 'edit'])

@@ -186,11 +186,119 @@
         .segments-list::-webkit-scrollbar-thumb:hover {
             background: var(--muted);
         }
-        .video-shell {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 16px;
-            border: 1px solid var(--border);
+        .video-title-editor {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        .video-title-input {
+            font-weight: 600;
+            font-size: 16px;
+            padding: 8px 12px;
+            border: 2px solid rgba(228, 87, 46, 0.1);
+            border-radius: 8px;
+            width: 100%;
+            background: transparent;
+            color: var(--text);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .video-title-input:hover {
+            background: rgba(228, 87, 46, 0.06);
+            border-color: rgba(228, 87, 46, 0.2);
+        }
+        .video-title-input:focus {
+            outline: none;
+            background: var(--surface);
+            border-color: var(--tint);
+            box-shadow: 0 0 0 3px rgba(228, 87, 46, 0.1);
+        }
+        .video-title-edit-hint {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: var(--muted);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+        .video-title-input:hover ~ .video-title-edit-hint {
+            opacity: 1;
+        }
+        .video-placeholder {
+            width: 100%;
+            height: 280px;
+            border-radius: 12px;
+            background-size: cover;
+            background-position: center;
+            background-color: var(--surface);
+        }
+        .video-placeholder-container {
+            width: 100%;
+            height: 280px;
+            border-radius: 12px;
+            background-size: cover;
+            background-position: center;
+            background-color: var(--surface);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .video-placeholder-container:hover {
+            filter: brightness(0.85);
+        }
+        .play-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+        .play-button:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+        .play-button:active {
+            transform: scale(0.98);
+        }
+        .play-button::after {
+            content: '▶';
+            font-size: 32px;
+            color: var(--tint);
+            margin-left: 4px;
+        }
+        .video-thumb-small {
+            width: 80px;
+            height: 45px;
+            border-radius: 6px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .title-status {
+            font-size: 12px;
+            margin-top: 4px;
+            min-height: 16px;
+            transition: all 0.2s ease;
+            color: var(--muted);
+        }
+        .title-status.success {
+            color: #2f6f6d;
+        }
+        .title-status.error {
+            color: #d93c32;
         }
     </style>
 </head>

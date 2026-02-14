@@ -14,10 +14,11 @@ Route::prefix('v1')->middleware('throttle:300,1')->group(function () {
     Route::post('auth/login', [AuthController::class, 'login']);
     Route::post('auth/refresh', [AuthController::class, 'refresh']);
 
+    Route::get('videos/stream/{video}', [VideoStreamController::class, 'stream']);
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('videos', [VideoController::class, 'index']);
         Route::get('videos/filters', [VideoController::class, 'filters']);
-        Route::get('videos/stream/{filename}', [VideoStreamController::class, 'stream']);
         Route::get('videos/{video}', [VideoController::class, 'show']);
         Route::get('videos/{video}/transcript', [TranscriptController::class, 'show']);
 
@@ -25,6 +26,7 @@ Route::prefix('v1')->middleware('throttle:300,1')->group(function () {
         Route::get('me', [ProfileController::class, 'me']);
         Route::get('me/stats', [ProfileController::class, 'stats']);
         Route::get('me/progress', [ProfileController::class, 'progress']);
+        Route::get('me/progress/{video}', [ProfileController::class, 'progressForVideo']);
         Route::post('me/progress', [ProfileController::class, 'storeProgress']);
 
         Route::get('me/saved-videos', [SavedVideoController::class, 'index']);

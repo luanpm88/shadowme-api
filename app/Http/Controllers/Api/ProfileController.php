@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use App\Models\Clip;
 use App\Models\PracticeSession;
 use App\Models\SavedVideo;
+use App\Models\Video;
 use App\Models\VideoProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -47,6 +48,19 @@ class ProfileController extends Controller
             ->paginate(20);
 
         return response()->json($progress);
+    }
+
+    public function progressForVideo(Request $request, Video $video)
+    {
+        $progress = VideoProgress::where('user_id', $request->user()->id)
+            ->where('video_id', $video->id)
+            ->first();
+
+        return response()->json([
+            'video_id' => $video->id,
+            'last_position_seconds' => (int) ($progress?->last_position_seconds ?? 0),
+            'minutes_practiced' => (int) ($progress?->minutes_practiced ?? 0),
+        ]);
     }
 
     public function storeProgress(StoreVideoProgressRequest $request)

@@ -5,17 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\DTOs\TranscriptData;
 use App\Http\Controllers\Controller;
 use App\Models\Video;
+use App\Services\VideoService;
 use App\Services\TranscriptService;
 use App\Services\Transcripts\AIHandler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class AdminVideoController extends Controller
 {
-    public function __construct(private readonly TranscriptService $transcriptService)
-    {
+    public function __construct(
+        private readonly VideoService $videoService,
+        private readonly TranscriptService $transcriptService
+    ) {
     }
 
     public function index()
@@ -49,20 +50,16 @@ class AdminVideoController extends Controller
             'video' => ['required', 'file', 'mimetypes:video/mp4,video/quicktime,video/x-m4v,video/webm,video/x-msvideo,video/x-matroska', 'max:102400'],
         ]);
 
-        $file = $request->file('video');
-        $extension = $file->getClientOriginalExtension() ?: 'mp4';
-        $fileName = Str::uuid()->toString() . '.' . $extension;
-        $path = $file->storeAs('videos', $fileName, 'public');
-
+        // Create video record first to get ID for file storage organization
         $video = Video::create([
             'title' => $payload['title'],
             'description' => $payload['description'] ?? null,
             'level' => $payload['level'],
             'duration_seconds' => 0,
             'source_type' => 'upload',
-            'source_id' => basename($path),
+            'source_ext' => 'mp4',
+            'thumb_ext' => null,
             'source_url' => null,
-            'thumbnail_url' => null,
             'language' => $payload['language'] ?? 'en',
             'topic_tags' => array_values(array_filter(array_map('trim', explode(',', $payload['topic_tags'] ?? '')))),
             'metadata' => null,
@@ -70,8 +67,37 @@ class AdminVideoController extends Controller
             'is_featured' => false,
         ]);
 
-        // Auto-generation removed - use the "Auto-generate" button in transcript builder instead
+        // Upload video file using VideoService
+        $uploadResult = $this->videoService->uploadFiles(
+            $video->id,
+            videoFile: $request->file('video'),
+            thumbnailFile: null,
+        );
+
+        // Update video with uploaded file extensions
+        $video->update([
+            'source_ext' => $uploadResult['source_ext'],
+            'thumb_ext' => $uploadResult['thumb_ext'],
+        ]);
+
         return redirect("/admin/videos/{$video->id}/transcript")
             ->with('status', 'Video uploaded successfully. Create or generate transcript below.');
+    }
+
+    public function updateTitle(Request $request, Video $video)
+    {
+        Gate::authorize('access-admin');
+
+        $payload = $request->validate([
+            'title' => ['required', 'string', 'max:200'],
+        ]);
+
+        $video->update(['title' => $payload['title']]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Title updated successfully',
+            'title' => $video->title,
+        ]);
     }
 }

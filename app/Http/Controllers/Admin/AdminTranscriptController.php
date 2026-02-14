@@ -14,8 +14,9 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminTranscriptController extends Controller
 {
-    public function __construct(private readonly TranscriptService $transcriptService)
-    {
+    public function __construct(
+        private readonly TranscriptService $transcriptService
+    ) {
     }
 
     public function edit(Video $video)
@@ -31,9 +32,13 @@ class AdminTranscriptController extends Controller
             ];
         })->values()->all() ?? [];
 
-        $videoUrl = $video->source_type === 'upload'
-            ? asset('storage/videos/' . $video->source_id)
-            : ($video->source_url ?? '');
+        // Build video URL from new storage structure
+        $videoUrl = '';
+        if ($video->source_type === 'upload' && $video->source_ext) {
+            $videoUrl = $video->getSourceUrl();
+        } elseif ($video->source_url) {
+            $videoUrl = $video->source_url;
+        }
 
         return view('admin.videos.transcript', [
             'video' => $video,
@@ -48,7 +53,16 @@ class AdminTranscriptController extends Controller
 
         $payload = $request->validate([
             'segments_json' => ['required', 'string'],
+            'title' => ['nullable', 'string', 'max:200'],
         ]);
+
+        // Update title if provided and not empty
+        if (!empty($payload['title'])) {
+            $newTitle = trim($payload['title']);
+            if ($newTitle) {
+                $video->update(['title' => $newTitle]);
+            }
+        }
 
         $segments = json_decode($payload['segments_json'], true);
         if (! is_array($segments) || empty($segments)) {
@@ -85,15 +99,24 @@ class AdminTranscriptController extends Controller
         );
 
         return redirect("/admin/videos/{$video->id}/transcript")
-            ->with('status', 'Transcript saved.');
+            ->with('status', 'Transcript and title saved successfully!');
     }
 
     public function auto(Video $video)
     {
         Gate::authorize('access-admin');
 
+        // For uploaded videos, use the new storage structure
+        if ($video->source_type === 'upload' && $video->source_ext) {
+            $videoPath = Storage::disk('public')->path($video->getSourcePath());
+        } else {
+            // For external videos, we can't process them with local AI engines
+            return redirect("/admin/videos/{$video->id}/transcript")
+                ->withErrors(['ai' => 'Only uploaded videos can be processed with AI transcriptions.']);
+        }
+
         // try {
-            $segments = AIHandler::request(Storage::disk('public')->path('videos/' . $video->source_id));
+            $segments = AIHandler::request($videoPath);
             if (empty($segments)) {
                 return redirect("/admin/videos/{$video->id}/transcript")
                     ->withErrors(['ai' => 'No segments returned by the transcript engine.']);

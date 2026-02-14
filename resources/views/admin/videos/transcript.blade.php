@@ -34,8 +34,27 @@
     <div class="row g-4">
         <div class="col-lg-7">
             <div class="video-shell d-flex flex-column gap-2">
-                <strong>{{ $video->title }}</strong>
-                <video id="video" controls preload="metadata" style="width:100%;border-radius:12px;">
+                <div class="video-title-editor">
+                    <input 
+                        type="text" 
+                        id="video-title" 
+                        class="video-title-input" 
+                        value="{{ $video->title }}" 
+                        data-video-id="{{ $video->id }}"
+                    />
+                    <span class="video-title-edit-hint">✎ Click to edit</span>
+                    <div id="title-status" class="title-status"></div>
+                </div>
+                @if ($video->getThumbUrl())
+                    <div id="video-placeholder-container" class="video-placeholder-container" style="background-image: url('{{ $video->getThumbUrl() }}');">
+                        <button id="play-button" class="play-button" type="button" aria-label="Play video" title="Click to play"></button>
+                    </div>
+                @else
+                    <div class="video-placeholder-container bg-secondary d-flex align-items-center justify-content-center" style="color: var(--text-light); font-size: 14px; text-align: center;">
+                        No thumbnail available
+                    </div>
+                @endif
+                <video id="video" controls preload="metadata" style="width:100%;border-radius:12px;display:none;">
                 <source src="{{ $videoUrl }}" type="video/mp4" />
                 Your browser does not support the video tag.
                 </video>
@@ -49,6 +68,7 @@
                     <form id="transcript-form" method="POST" action="/admin/videos/{{ $video->id }}/transcript">
                         @csrf
                         <input type="hidden" name="segments_json" id="segments_json" />
+                        <input type="hidden" name="title" id="form_title" value="{{ $video->title }}" />
                         <div class="d-flex flex-wrap gap-2 mb-2">
                             <button class="btn btn-primary" type="button" id="add-segment">Add segment</button>
                             <button class="btn btn-outline-secondary" type="button" id="sort-segments">Sort by time</button>
@@ -366,12 +386,107 @@
             const sortBtn = document.getElementById('sort-segments');
             const form = document.getElementById('transcript-form');
             const hiddenInput = document.getElementById('segments_json');
+            const titleInput = document.getElementById('video-title');
+            const titleStatus = document.getElementById('title-status');
 
             const manager = new TranscriptManager(initialSegments, video, container);
 
             // Button handlers
             addBtn.addEventListener('click', () => manager.addSegment());
             sortBtn.addEventListener('click', () => manager.sortByTime());
+
+            // Title editing handler
+            let titleSaveTimeout;
+            const formTitleInput = document.getElementById('form_title');
+            
+            if (titleInput) {
+                titleInput.addEventListener('input', () => {
+                    // Update hidden form field as user types
+                    if (formTitleInput) {
+                        formTitleInput.value = titleInput.value.trim();
+                    }
+                });
+                
+                titleInput.addEventListener('blur', () => {
+                    const newTitle = titleInput.value.trim();
+                    const videoId = titleInput.dataset.videoId;
+                    
+                    if (!newTitle) {
+                        titleStatus.textContent = 'Title cannot be empty';
+                        titleStatus.className = 'title-status error';
+                        titleInput.value = titleInput.dataset.originalTitle || '{{ $video->title }}';
+                        if (formTitleInput) formTitleInput.value = titleInput.value;
+                        return;
+                    }
+                    
+                    // Update hidden form field
+                    if (formTitleInput) {
+                        formTitleInput.value = newTitle;
+                    }
+                    
+                    // Try to save via AJAX for immediate feedback
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+                    if (csrfToken) {
+                        fetch(`/admin/videos/${videoId}/title`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken.getAttribute('content')
+                            },
+                            body: JSON.stringify({ title: newTitle })
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error('HTTP ' + response.status);
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                titleStatus.textContent = '✓ Saved';
+                                titleStatus.className = 'title-status success';
+                                titleInput.dataset.originalTitle = newTitle;
+                                
+                                clearTimeout(titleSaveTimeout);
+                                titleSaveTimeout = setTimeout(() => {
+                                    titleStatus.textContent = '';
+                                    titleStatus.className = 'title-status';
+                                }, 2500);
+                            }
+                        })
+                        .catch(error => {
+                            console.warn('Title AJAX save skipped, will save with form:', error);
+                            titleStatus.textContent = '(Will save with transcript)';
+                            titleStatus.className = 'title-status';
+                        });
+                    } else {
+                        titleStatus.textContent = '(Will save with transcript)';
+                        titleStatus.className = 'title-status';
+                    }
+                });
+            }
+
+            // Play button overlay handler
+            const playButton = document.getElementById('play-button');
+            const placeholderContainer = document.getElementById('video-placeholder-container');
+            
+            if (playButton && video) {
+                const showVideo = () => {
+                    if (placeholderContainer) placeholderContainer.style.display = 'none';
+                    video.style.display = 'block';
+                    video.focus();
+                };
+
+                playButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showVideo();
+                    video.play();
+                });
+
+                // Also show video when it starts playing naturally
+                video.addEventListener('play', () => {
+                    if (placeholderContainer) placeholderContainer.style.display = 'none';
+                    video.style.display = 'block';
+                });
+            }
 
             // Form submission
             form.addEventListener('submit', (event) => {
@@ -383,7 +498,17 @@
                     return;
                 }
                 
+                // Ensure form title field is updated before submission
+                if (formTitleInput && titleInput) {
+                    const currentTitle = titleInput.value.trim();
+                    formTitleInput.value = currentTitle;
+                    console.log('Submitting title:', currentTitle);
+                } else {
+                    console.warn('formTitleInput or titleInput not found');
+                }
+                
                 hiddenInput.value = JSON.stringify(validSegments);
+                console.log('Form data ready for submission');
             });
         })();
     </script>

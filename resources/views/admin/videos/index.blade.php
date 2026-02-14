@@ -33,8 +33,19 @@
                     @foreach ($videos as $video)
                         <tr>
                             <td>
-                                <div class="fw-semibold">{{ $video->title }}</div>
-                                <div class="muted">{{ $video->duration_seconds }}s · {{ $video->source_type }}</div>
+                                <div class="d-flex gap-3 align-items-start">
+                                    @if ($video->getThumbUrl())
+                                        <img src="{{ $video->getThumbUrl() }}" alt="{{ $video->title }}" class="video-thumb-small" />
+                                    @else
+                                        <div class="video-thumb-small bg-secondary d-flex align-items-center justify-content-center">
+                                            <span style="color: var(--text-light);">No thumb</span>
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <div class="fw-semibold">{{ $video->title }}</div>
+                                        <div class="muted">{{ $video->duration_seconds }}s · {{ $video->source_type }}</div>
+                                    </div>
+                                </div>
                             </td>
                             <td><span class="badge badge-soft">{{ $video->level }}</span></td>
                             <td>{{ $video->language ?? 'en' }}</td>
