@@ -46,6 +46,18 @@ class VideoStreamController
 
         $length = $end - $start + 1;
 
+        $headers = [
+            'Content-Type' => $mimeType,
+            'Content-Length' => $length,
+            'Content-Disposition' => 'inline; filename="' . basename($file) . '"',
+            'Cache-Control' => 'public, max-age=86400',
+            'Accept-Ranges' => 'bytes',
+        ];
+
+        if ($status === 206) {
+            $headers['Content-Range'] = "bytes {$start}-{$end}/{$fileSize}";
+        }
+
         return response()->stream(
             function () use ($file, $start, $length) {
                 $handle = fopen($file, 'rb');
@@ -67,14 +79,7 @@ class VideoStreamController
                 fclose($handle);
             },
             $status,
-            [
-                'Content-Type' => $mimeType,
-                'Content-Length' => $length,
-                'Content-Disposition' => 'inline; filename="' . basename($file) . '"',
-                'Cache-Control' => 'public, max-age=86400',
-                'Accept-Ranges' => 'bytes',
-                'Content-Range' => "bytes {$start}-{$end}/{$fileSize}",
-            ]
+            $headers
         );
     }
 }
