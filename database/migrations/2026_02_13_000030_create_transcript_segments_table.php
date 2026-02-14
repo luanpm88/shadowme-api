@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('transcript_segments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('transcript_id')->constrained()->cascadeOnDelete();
-            $table->unsignedInteger('start_time');
-            $table->unsignedInteger('end_time');
+            $table->decimal('start_time', 8, 2);
+            $table->decimal('end_time', 8, 2);
             $table->text('text');
             $table->unsignedInteger('position');
             $table->timestamps();

@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Clear existing data once so seeders can run deterministically.
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        // DB::statement('SET FOREIGN_KEY_CHECKS=0');
         DB::table('transcript_segments')->delete();
         DB::table('transcripts')->delete();
         DB::table('clips')->delete();
@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         DB::table('refresh_tokens')->delete();
         DB::table('personal_access_tokens')->delete();
         DB::table('users')->delete();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        // DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
         $this->call([
             UserSeeder::class,
