@@ -35,29 +35,19 @@ class VideoSeeder extends Seeder
                 'thumbnail_url' => 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=80',
                 'segments' => [
                     [
-                        'start_time' => 0.0,
-                        'end_time' => 4.5,
-                        'text' => 'Hi, I\'m interviewing people on the street today about their English learning journey.',
+                        'start_time' => 63,
+                        'end_time' => 67.1,
+                        'text' => 'We know people are like this conversation, and it very hard to listen to somebody',
                     ],
                     [
-                        'start_time' => 4.5,
-                        'end_time' => 8.5,
-                        'text' => 'Many people find it intimidating to speak English in public, but it\'s actually a lot easier than they think.',
+                        'start_time' => 212.2,
+                        'end_time' => 215,
+                        'text' => 'A friend of mine described it as standing in your own truth,',
                     ],
                     [
-                        'start_time' => 8.5,
-                        'end_time' => 12.5,
-                        'text' => 'The key is to practice consistently and not worry about making mistakes.',
-                    ],
-                    [
-                        'start_time' => 12.5,
-                        'end_time' => 16.5,
-                        'text' => 'Everyone makes mistakes when learning a new language, and that\'s perfectly normal.',
-                    ],
-                    [
-                        'start_time' => 16.5,
-                        'end_time' => 20.5,
-                        'text' => 'The most important thing is to just keep practicing and stay confident.',
+                        'start_time' => 232.7,
+                        'end_time' => 235.67,
+                        'text' => 'First of all, I think absolute honesty may not be what we want.',
                     ],
                 ],
             ],
@@ -77,24 +67,19 @@ class VideoSeeder extends Seeder
                 'thumbnail_url' => 'https://images.unsplash.com/photo-1508704019882-f9cf40e475b4?auto=format&fit=crop&w=900&q=80',
                 'segments' => [
                     [
-                        'start_time' => 0.0,
-                        'end_time' => 5.0,
-                        'text' => 'We learn by listening deeply before we respond. Silence creates the space for meaning to land.'
+                        'start_time' => 63,
+                        'end_time' => 67.1,
+                        'text' => 'We know people are like this conversation, and it very hard to listen to somebody',
                     ],
                     [
-                        'start_time' => 5.0,
-                        'end_time' => 10.0,
-                        'text' => 'Most people don\'t really listen. They\'re just waiting for their turn to speak.',
+                        'start_time' => 212.2,
+                        'end_time' => 215,
+                        'text' => 'A friend of mine described it as standing in your own truth,',
                     ],
                     [
-                        'start_time' => 10.0,
-                        'end_time' => 15.0,
-                        'text' => 'Active listening is a skill that can be learned and developed over time.',
-                    ],
-                    [
-                        'start_time' => 15.0,
-                        'end_time' => 20.0,
-                        'text' => 'When you truly listen, you show respect and build deeper connections with others.',
+                        'start_time' => 232.7,
+                        'end_time' => 235.67,
+                        'text' => 'First of all, I think absolute honesty may not be what we want.',
                     ],
                 ],
             ],
@@ -114,29 +99,19 @@ class VideoSeeder extends Seeder
                 'thumbnail_url' => 'https://images.unsplash.com/photo-1517638851339-4aa32003c11a?auto=format&fit=crop&w=900&q=80',
                 'segments' => [
                     [
-                        'start_time' => 0.0,
-                        'end_time' => 4.5,
-                        'text' => 'Hello everyone, today we\'re going to learn about intonation in English.'
+                        'start_time' => 63,
+                        'end_time' => 67.1,
+                        'text' => 'We know people are like this conversation, and it very hard to listen to somebody',
                     ],
                     [
-                        'start_time' => 4.5,
-                        'end_time' => 8.5,
-                        'text' => 'Intonation is the rise and fall of your voice when you speak.',
+                        'start_time' => 212.2,
+                        'end_time' => 215,
+                        'text' => 'A friend of mine described it as standing in your own truth,',
                     ],
                     [
-                        'start_time' => 8.5,
-                        'end_time' => 12.5,
-                        'text' => 'For questions, your voice usually goes up at the end.',
-                    ],
-                    [
-                        'start_time' => 12.5,
-                        'end_time' => 16.5,
-                        'text' => 'For statements, your voice usually goes down at the end.',
-                    ],
-                    [
-                        'start_time' => 16.5,
-                        'end_time' => 20.5,
-                        'text' => 'Let\'s practice together now. Repeat after me.',
+                        'start_time' => 232.7,
+                        'end_time' => 235.67,
+                        'text' => 'First of all, I think absolute honesty may not be what we want.',
                     ],
                 ],
             ],
