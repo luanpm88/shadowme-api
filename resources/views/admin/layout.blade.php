@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@yield('title', 'Shadow Me Admin')</title>
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+        crossorigin="anonymous"
+    />
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f7f2ec;
+            --surface: #ffffff;
+            --card: #f1e9e1;
+            --text: #15161a;
+            --muted: #857b6f;
+            --border: #ded5cb;
+            --tint: #e4572e;
+            --accent: #2f6f6d;
+            --bs-body-bg: var(--bg);
+            --bs-body-color: var(--text);
+            --bs-primary: var(--tint);
+            --bs-primary-rgb: 228, 87, 46;
+            --bs-secondary: var(--accent);
+            --bs-border-color: var(--border);
+            --bs-link-color: var(--accent);
+            --bs-link-hover-color: #245452;
+            --bs-body-font-family: "Avenir Next", "Iowan Old Style", system-ui, -apple-system, sans-serif;
+        }
+        body {
+            font-family: "Iowan Old Style", "Avenir Next", system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+        .admin-navbar {
+            background: linear-gradient(135deg, rgba(228,87,46,0.08), rgba(47,111,109,0.08));
+            border-bottom: 1px solid var(--border);
+        }
+        .card {
+            border-radius: 16px;
+            border-color: var(--border);
+            box-shadow: 0 14px 30px rgba(17, 24, 39, 0.06);
+        }
+        .btn { border-radius: 999px; font-weight: 600; }
+        .btn-primary {
+            background-color: var(--tint);
+            border-color: var(--tint);
+        }
+        .btn-primary:hover {
+            background-color: #d94f2b;
+            border-color: #d94f2b;
+        }
+        .btn-outline-secondary {
+            color: var(--tint);
+            border-color: rgba(228, 87, 46, 0.6);
+        }
+        .btn-outline-secondary:hover {
+            background: rgba(228, 87, 46, 0.12);
+            color: var(--tint);
+        }
+        .btn-outline-primary {
+            color: var(--tint);
+            border-color: rgba(228, 87, 46, 0.6);
+        }
+        .btn-outline-primary:hover {
+            background: rgba(228, 87, 46, 0.12);
+            color: var(--tint);
+        }
+        .btn-link { color: var(--accent); }
+        .muted { color: var(--muted); font-size: 13px; }
+        .badge-soft {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .table-shell {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .table-video thead th {
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            border-bottom-color: var(--border);
+        }
+        .table-video tbody tr {
+            border-bottom: 1px solid var(--border);
+        }
+        .table-video tbody tr:last-child {
+            border-bottom: none;
+        }
+        .table-video td, .table-video th {
+            padding: 16px 18px;
+        }
+        .notice {
+            background: rgba(228,87,46,0.08);
+            border: 1px solid rgba(228,87,46,0.3);
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+        .notice.error {
+            background: rgba(150, 30, 30, 0.08);
+            border-color: rgba(150, 30, 30, 0.3);
+        }
+        .form-control,
+        .form-select {
+            border-radius: 12px;
+            border-color: var(--border);
+        }
+        textarea.form-control { min-height: 110px; }
+        .segment-row {
+            display: grid;
+            grid-template-columns: 100px 100px 1fr auto;
+            gap: 16px;
+            align-items: start;
+            padding: 14px 0;
+            border-bottom: 1px dashed var(--border);
+        }
+        .segment-row:last-child { border-bottom: none; }
+        .segment-row button { white-space: nowrap; }
+        .segments-list { margin-top: 14px; }
+        .video-shell {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar admin-navbar">
+        <div class="container d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+                <h1 class="h5 mb-0">Shadow Me Admin</h1>
+                <div class="muted">Manage uploads, transcripts, and segments.</div>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <a href="/admin/videos" class="btn btn-outline-secondary">Videos</a>
+                <a href="/admin/users" class="btn btn-outline-secondary">Users</a>
+                <a href="/admin/videos/create" class="btn btn-primary">Upload</a>
+                <form method="POST" action="/logout" class="m-0">
+                    @csrf
+                    <button class="btn btn-outline-primary" type="submit">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <main class="container py-4">
+        @yield('content')
+    </main>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"
+    ></script>
+</body>
+</html>

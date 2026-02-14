@@ -11,6 +11,6 @@ class AdminController extends Controller
     {
         Gate::authorize('access-admin');
 
-        return view('admin');
+        return redirect('/admin/videos');
     }
 }
