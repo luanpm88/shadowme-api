@@ -90,12 +90,12 @@ class WhisperOllamaTranscriptEngine implements VideoTranscriptEngineInterface
             $text = implode(' ', array_slice($lines, 2));
 
             if (preg_match('/(\d{2}):(\d{2}):(\d{2}),(\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2}),(\d{3})/', $timestampLine, $matches)) {
-                $startTime = ($matches[1] * 3600) + ($matches[2] * 60) + $matches[3];
-                $endTime = ($matches[5] * 3600) + ($matches[6] * 60) + $matches[7];
+                $startTime = ($matches[1] * 3600) + ($matches[2] * 60) + $matches[3] + ($matches[4] / 1000);
+                $endTime = ($matches[5] * 3600) + ($matches[6] * 60) + $matches[7] + ($matches[8] / 1000);
 
                 $segments[] = [
-                    'start_time' => $startTime,
-                    'end_time' => $endTime,
+                    'start_time' => (float) $startTime,
+                    'end_time' => (float) $endTime,
                     'text' => trim($text),
                     'position' => count($segments) + 1,
                 ];

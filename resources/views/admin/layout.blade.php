@@ -122,12 +122,70 @@
             grid-template-columns: 100px 100px 1fr auto;
             gap: 16px;
             align-items: start;
-            padding: 14px 0;
+            padding: 14px;
             border-bottom: 1px dashed var(--border);
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .segment-row:hover {
+            background: rgba(228, 87, 46, 0.04);
+        }
+        .segment-row.segment-active {
+            background: rgba(228, 87, 46, 0.1);
+            border: 1px solid rgba(228, 87, 46, 0.3);
+            border-bottom: 1px solid rgba(228, 87, 46, 0.3);
+            box-shadow: 0 2px 8px rgba(228, 87, 46, 0.15);
         }
         .segment-row:last-child { border-bottom: none; }
-        .segment-row button { white-space: nowrap; }
-        .segments-list { margin-top: 14px; }
+        .segment-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .btn-action {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            border-radius: 6px;
+            font-size: 13px;
+            line-height: 1;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-action:hover {
+            background: var(--tint);
+            color: white;
+            border-color: var(--tint);
+            transform: scale(1.1);
+        }
+        .btn-action:active {
+            transform: scale(0.95);
+        }
+        .segments-list { 
+            margin-top: 14px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        .segments-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .segments-list::-webkit-scrollbar-track {
+            background: var(--card);
+            border-radius: 4px;
+        }
+        .segments-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+        .segments-list::-webkit-scrollbar-thumb:hover {
+            background: var(--muted);
+        }
         .video-shell {
             background: var(--card);
             border-radius: 16px;

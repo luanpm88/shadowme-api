@@ -124,8 +124,8 @@ PROMPT;
 
             return collect($segments)->map(function ($segment, int $index) {
                 return [
-                    'start_time' => (int) round(($segment['start_time'] ?? 0)),
-                    'end_time' => (int) round(($segment['end_time'] ?? 0)),
+                    'start_time' => (float) ($segment['start_time'] ?? 0),
+                    'end_time' => (float) ($segment['end_time'] ?? 0),
                     'text' => trim((string) ($segment['text'] ?? '')),
                     'position' => $index + 1,
                 ];

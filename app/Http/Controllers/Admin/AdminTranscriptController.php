@@ -56,16 +56,19 @@ class AdminTranscriptController extends Controller
         }
 
         $normalized = collect($segments)
-            ->map(function ($segment, int $index) {
+            ->map(function ($segment) {
                 return [
-                    'start_time' => (int) round($segment['start_time'] ?? 0),
-                    'end_time' => (int) round($segment['end_time'] ?? 0),
+                    'start_time' => (float) ($segment['start_time'] ?? 0),
+                    'end_time' => (float) ($segment['end_time'] ?? 0),
                     'text' => trim((string) ($segment['text'] ?? '')),
-                    'position' => $index + 1,
                 ];
             })
             ->filter(fn ($segment) => $segment['text'] !== '' && $segment['end_time'] > $segment['start_time'])
+            ->sortBy('start_time')
             ->values()
+            ->map(function ($segment, int $index) {
+                return array_merge($segment, ['position' => $index + 1]);
+            })
             ->all();
 
         if (empty($normalized)) {
