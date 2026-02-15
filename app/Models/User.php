@@ -70,4 +70,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(RefreshToken::class);
     }
+
+    public function settings()
+    {
+        return $this->hasOne(UserSettings::class);
+    }
 }

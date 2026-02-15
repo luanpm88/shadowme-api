@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ClipController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SavedVideoController;
+use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\TranscriptController;
 use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\Api\VideoStreamController;
@@ -28,6 +29,9 @@ Route::prefix('v1')->middleware('throttle:300,1')->group(function () {
         Route::get('me/progress', [ProfileController::class, 'progress']);
         Route::get('me/progress/{video}', [ProfileController::class, 'progressForVideo']);
         Route::post('me/progress', [ProfileController::class, 'storeProgress']);
+
+        Route::get('me/settings', [SettingsController::class, 'show']);
+        Route::patch('me/settings', [SettingsController::class, 'update']);
 
         Route::get('me/saved-videos', [SavedVideoController::class, 'index']);
         Route::post('me/saved-videos', [SavedVideoController::class, 'store']);
