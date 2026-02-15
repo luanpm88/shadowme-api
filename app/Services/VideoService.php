@@ -53,8 +53,17 @@ class VideoService
         if (array_key_exists('published', $filters)) {
             $query->where('is_published', filter_var($filters['published'], FILTER_VALIDATE_BOOL));
         }
+        $sort = $filters['sort'] ?? null;
 
-        return $query->latest()->paginate(20);
+        if ($sort === 'featured') {
+            $query->where('is_featured', true)->orderByDesc('updated_at');
+        } elseif ($sort === 'most_viewed' || $sort === 'most_practiced') {
+            $query->withCount('practiceSessions')->orderByDesc('practice_sessions_count');
+        } else {
+            $query->latest();
+        }
+
+        return $query->paginate(20);
     }
 
     public function filters(?User $viewer = null): array
@@ -262,6 +271,12 @@ class VideoService
             Log::error("Failed to delete video files: {$e->getMessage()}");
             return false;
         }
+    }
+
+    public function deleteVideo(Video $video): void
+    {
+        $this->deleteFiles($video->id);
+        $video->delete();
     }
 
 }

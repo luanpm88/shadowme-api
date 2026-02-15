@@ -17,6 +17,10 @@ class VideoSeeder extends Seeder
     {
         $videoService = new VideoService();
 
+        Video::query()->get()->each(function (Video $video) use ($videoService) {
+            $videoService->deleteVideo($video);
+        });
+
         // Define sample videos data structure
         $samples = [
             [

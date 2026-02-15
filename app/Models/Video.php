@@ -47,6 +47,11 @@ class Video extends Model
         return $this->hasMany(Clip::class);
     }
 
+    public function practiceSessions()
+    {
+        return $this->hasMany(PracticeSession::class);
+    }
+
     /**
      * Get the relative path to the source video file.
      * Format: videos/{id}/video.{ext}

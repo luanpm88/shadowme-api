@@ -56,7 +56,7 @@ class VideoController extends Controller
     public function destroy(Video $video)
     {
         $this->authorize('manage', $video);
-        $video->delete();
+        $this->videoService->deleteVideo($video);
 
         return response()->json(['message' => 'Deleted']);
     }

@@ -19,14 +19,20 @@ class AdminVideoController extends Controller
     ) {
     }
 
-    public function index()
+    public function index(Request $request)
     {
         Gate::authorize('access-admin');
 
-        $videos = Video::with(['transcript.segments'])->latest()->paginate(20);
+        $videos = $this->videoService->list($request->all(), $request->user());
+        $videos->getCollection()->load(['transcript.segments']);
+        $videos->appends($request->query());
+
+        $filters = $this->videoService->filters($request->user());
 
         return view('admin.videos.index', [
             'videos' => $videos,
+            'filters' => $filters,
+            'active' => $request->all(),
         ]);
     }
 
@@ -99,5 +105,28 @@ class AdminVideoController extends Controller
             'message' => 'Title updated successfully',
             'title' => $video->title,
         ]);
+    }
+
+    public function updateFeatured(Request $request, Video $video)
+    {
+        Gate::authorize('access-admin');
+
+        $payload = $request->validate([
+            'featured' => ['required', 'boolean'],
+        ]);
+
+        $video->update(['is_featured' => (bool) $payload['featured']]);
+
+        return redirect('/admin/videos')
+            ->with('status', $video->is_featured ? 'Video marked as featured.' : 'Video removed from featured.');
+    }
+
+    public function destroy(Video $video)
+    {
+        Gate::authorize('access-admin');
+
+        $this->videoService->deleteVideo($video);
+
+        return redirect('/admin/videos')->with('status', 'Video deleted.');
     }
 }

@@ -15,6 +15,43 @@
         <div class="notice">{{ session('status') }}</div>
     @endif
 
+    <form method="GET" action="/admin/videos" class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-12 col-md-3">
+                    <label class="form-label">Sort</label>
+                    <select name="sort" class="form-select">
+                        <option value="" {{ empty($active['sort'] ?? '') ? 'selected' : '' }}>Recently added</option>
+                        <option value="featured" {{ ($active['sort'] ?? '') === 'featured' ? 'selected' : '' }}>Featured</option>
+                        <option value="most_viewed" {{ ($active['sort'] ?? '') === 'most_viewed' ? 'selected' : '' }}>Most views</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-3">
+                    <label class="form-label">Level</label>
+                    <select name="level" class="form-select">
+                        <option value="">All levels</option>
+                        @foreach ($filters['levels'] ?? [] as $level)
+                            <option value="{{ $level }}" {{ ($active['level'] ?? '') === $level ? 'selected' : '' }}>{{ $level }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label class="form-label">Topic</label>
+                    <select name="topic_tags" class="form-select">
+                        <option value="">All topics</option>
+                        @foreach ($filters['topic_tags'] ?? [] as $tag)
+                            <option value="{{ $tag }}" {{ ($active['topic_tags'] ?? '') === $tag ? 'selected' : '' }}>{{ $tag }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-12 col-md-2 d-flex gap-2">
+                    <button class="btn btn-primary w-100" type="submit">Apply</button>
+                    <a class="btn btn-outline-secondary w-100" href="/admin/videos">Clear</a>
+                </div>
+            </div>
+        </div>
+    </form>
+
     @if ($videos->count())
         <div class="table-shell">
             <div class="table-responsive">
@@ -25,6 +62,7 @@
                         <th>Level</th>
                         <th>Language</th>
                         <th>Transcript</th>
+                        <th>Featured</th>
                         <th>Updated</th>
                         <th>Actions</th>
                     </tr>
@@ -56,9 +94,31 @@
                                     <span class="muted">Not generated</span>
                                 @endif
                             </td>
+                            <td>
+                                @if ($video->is_featured)
+                                    <span class="badge bg-success-subtle text-success">Featured</span>
+                                @else
+                                    <span class="muted">No</span>
+                                @endif
+                            </td>
                             <td class="muted">{{ $video->updated_at?->diffForHumans() }}</td>
                             <td>
-                                <a class="btn btn-outline-secondary btn-sm" href="/admin/videos/{{ $video->id }}/transcript">Edit transcript</a>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a class="btn btn-outline-secondary btn-sm" href="/admin/videos/{{ $video->id }}/transcript">Edit transcript</a>
+                                    <form method="POST" action="/admin/videos/{{ $video->id }}/featured" class="m-0">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="featured" value="{{ $video->is_featured ? 0 : 1 }}" />
+                                        <button class="btn btn-outline-primary btn-sm" type="submit">
+                                            {{ $video->is_featured ? 'Remove feature' : 'Set featured' }}
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="/admin/videos/{{ $video->id }}" class="m-0" onsubmit="return confirm('Delete this video? This removes the transcript and files.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-outline-danger btn-sm" type="submit">Delete</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach
